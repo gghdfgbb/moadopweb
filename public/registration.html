@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moadop - Worker Application</title>
+    <title>Moadop - Professional Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #2E86AB;
@@ -19,14 +20,14 @@
             --error: #F44336;
             --warning: #FF9800;
             --info: #2196F3;
-            --border-radius: 12px;
-            --border-radius-sm: 6px;
-            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            --box-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --border-radius: 16px;
+            --border-radius-sm: 8px;
+            --box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            --box-shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.2);
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --glass-effect: rgba(30, 30, 45, 0.7);
             --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-            --glass-blur: blur(10px);
+            --glass-blur: blur(15px);
         }
 
         * {
@@ -40,20 +41,25 @@
             background-color: var(--secondary);
             color: var(--text-primary);
             line-height: 1.6;
-            background-image: radial-gradient(circle at 25% 25%, rgba(46, 134, 171, 0.1) 0%, transparent 50%);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(46, 134, 171, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 85% 30%, rgba(0, 188, 212, 0.1) 0%, transparent 30%),
+                radial-gradient(circle at 50% 80%, rgba(30, 30, 45, 0.8) 0%, transparent 50%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow-x: hidden;
         }
 
-        .registration-container {
+        .auth-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
+            position: relative;
         }
 
-        .registration-card {
+        .auth-card {
             background: var(--glass-effect);
             backdrop-filter: var(--glass-blur);
             border-radius: var(--border-radius);
@@ -62,17 +68,31 @@
             box-shadow: var(--box-shadow);
             position: relative;
             overflow: hidden;
+            transition: var(--transition);
         }
 
-        .registration-card::before {
+        .auth-card::before {
             content: '';
             position: absolute;
             top: -50%;
             right: -50%;
             width: 200px;
             height: 200px;
-            background: radial-gradient(circle, rgba(46, 134, 171, 0.2) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(46, 134, 171, 0.25) 0%, transparent 70%);
             border-radius: 50%;
+            z-index: 0;
+        }
+
+        .auth-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -30%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(0, 188, 212, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
         }
 
         .logo-container {
@@ -83,31 +103,84 @@
         }
 
         .logo-container h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2.2rem;
+            font-weight: 800;
             color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 5px;
+            gap: 12px;
+            margin-bottom: 8px;
         }
 
         .logo-icon {
-            font-size: 2rem;
+            font-size: 2.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
         }
 
         .subtitle {
             color: var(--text-tertiary);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-sm);
+            padding: 5px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
             font-size: 0.9rem;
+            transition: var(--transition);
+            color: var(--text-secondary);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--box-shadow-sm);
+        }
+
+        .form-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .form {
+            display: none;
+        }
+
+        .form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .form-group {
             margin-bottom: 20px;
             position: relative;
-            z-index: 2;
         }
 
         .form-group label {
@@ -118,10 +191,23 @@
             font-size: 0.9rem;
         }
 
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1rem;
+        }
+
         .form-control {
             width: 100%;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 14px 14px 14px 45px;
+            background: rgba(255, 255, 255, 0.07);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--border-radius-sm);
             color: var(--text-primary);
@@ -133,8 +219,8 @@
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 2px rgba(46, 134, 171, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(46, 134, 171, 0.2);
         }
 
         .form-control::placeholder {
@@ -145,17 +231,18 @@
             appearance: none;
             background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%237E7E8F' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
             background-repeat: no-repeat;
-            background-position: right 12px center;
+            background-position: right 15px center;
             background-size: 12px;
+            padding-right: 40px;
         }
 
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 15px;
             border: none;
             border-radius: var(--border-radius-sm);
             font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
@@ -171,7 +258,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 134, 171, 0.4);
+            box-shadow: 0 7px 20px rgba(46, 134, 171, 0.4);
         }
 
         .btn-primary:disabled {
@@ -201,11 +288,13 @@
         }
 
         .alert {
-            padding: 12px 16px;
+            padding: 14px 16px;
             border-radius: var(--border-radius-sm);
             margin-bottom: 20px;
             font-size: 0.9rem;
             display: none;
+            position: relative;
+            z-index: 2;
         }
 
         .alert-success {
@@ -220,27 +309,8 @@
             color: var(--error);
         }
 
-        .role-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-
-        .badge-customer-service {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-        }
-
-        .badge-rider {
-            background: linear-gradient(135deg, #FF9800, #F57C00);
-            color: white;
-        }
-
         .form-section {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -254,13 +324,9 @@
             gap: 10px;
         }
 
-        .form-section-title i {
-            font-size: 1.2rem;
-        }
-
         .role-info {
             background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
+            padding: 16px;
             border-radius: var(--border-radius-sm);
             margin-bottom: 20px;
             border-left: 3px solid var(--primary);
@@ -269,129 +335,367 @@
         .role-info h4 {
             color: var(--primary);
             margin-bottom: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .role-info p {
             color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: var(--border-radius-sm);
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(46, 134, 171, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+            color: var(--primary);
+        }
+
+        .feature-text {
             font-size: 0.8rem;
-            line-height: 1.4;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .forgot-password a:hover {
+            color: var(--accent);
+            text-decoration: underline;
         }
 
         @media (max-width: 768px) {
-            .registration-card {
+            .auth-card {
                 padding: 30px 20px;
             }
             
             .logo-container h1 {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            animation: floatAround 15s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 5%;
+            animation-duration: 20s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 70%;
+            left: 80%;
+            animation-duration: 25s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            top: 40%;
+            left: 90%;
+            animation-duration: 15s;
+        }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, 15px) rotate(90deg); }
+            50% { transform: translate(0, 30px) rotate(180deg); }
+            75% { transform: translate(-10px, 15px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="registration-container">
-        <div class="registration-card">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="floating-elements">
+                <div class="floating-element"></div>
+                <div class="floating-element"></div>
+                <div class="floating-element"></div>
+            </div>
+            
             <div class="logo-container">
                 <h1>
                     <span class="logo-icon">🏢</span>
                     MOADOP
                 </h1>
-                <div class="subtitle">Professional Worker Application</div>
+                <div class="subtitle">Professional Workforce Management</div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="login">Login</div>
+                <div class="tab" data-tab="register">Register</div>
             </div>
 
             <div id="alert" class="alert"></div>
 
-            <form id="registrationForm">
-                <div class="form-section">
-                    <div class="form-section-title">
-                        <i>👤</i>
-                        Personal Information
-                    </div>
-                    
+            <div class="form-container">
+                <!-- Login Form -->
+                <form id="loginForm" class="form active">
                     <div class="form-group">
-                        <label for="firstName">First Name *</label>
-                        <input type="text" id="firstName" class="form-control" placeholder="Enter your first name" required>
+                        <label for="loginEmail">Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="input-icon fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="lastName">Last Name *</label>
-                        <input type="text" id="lastName" class="form-control" placeholder="Enter your last name" required>
+                        <label for="loginPassword">Password</label>
+                        <div class="input-with-icon">
+                            <i class="input-icon fas fa-lock"></i>
+                            <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                            <i class="password-toggle fas fa-eye" data-target="loginPassword"></i>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="email">Email Address *</label>
-                        <input type="email" id="email" class="form-control" placeholder="Enter your email address" required>
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        Sign In
+                    </button>
+
+                    <div class="forgot-password">
+                        <a href="#" id="forgotPassword">Forgot your password?</a>
+                    </div>
+                </form>
+
+                <!-- Registration Form -->
+                <form id="registerForm" class="form">
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-user"></i>
+                            Personal Information
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <div class="input-with-icon">
+                                <i class="input-icon fas fa-user"></i>
+                                <input type="text" id="firstName" class="form-control" placeholder="Enter your first name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <div class="input-with-icon">
+                                <i class="input-icon fas fa-user"></i>
+                                <input type="text" id="lastName" class="form-control" placeholder="Enter your last name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <div class="input-with-icon">
+                                <i class="input-icon fas fa-envelope"></i>
+                                <input type="email" id="email" class="form-control" placeholder="Enter your email address" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <div class="input-with-icon">
+                                <i class="input-icon fas fa-phone"></i>
+                                <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-with-icon">
+                                <i class="input-icon fas fa-lock"></i>
+                                <input type="password" id="password" class="form-control" placeholder="Create a password" required>
+                                <i class="password-toggle fas fa-eye" data-target="password"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <div class="input-with-icon">
+                                <i class="input-icon fas fa-lock"></i>
+                                <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm your password" required>
+                                <i class="password-toggle fas fa-eye" data-target="confirmPassword"></i>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="phone">Phone Number *</label>
-                        <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" required>
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-briefcase"></i>
+                            Role Selection
+                        </div>
+
+                        <div class="form-group">
+                            <label for="role">Select Your Role</label>
+                            <div class="input-with-icon">
+                                <i class="input-icon fas fa-user-tag"></i>
+                                <select id="role" class="form-control select-control" required>
+                                    <option value="">Choose your role...</option>
+                                    <option value="customer_service">Customer Service</option>
+                                    <option value="rider">Rider</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="role-info" id="customerServiceInfo" style="display: none;">
+                            <h4><i class="fas fa-headset"></i> Customer Service Role</h4>
+                            <p>Handle customer inquiries, process orders, and ensure customer satisfaction through excellent communication and problem-solving skills.</p>
+                        </div>
+
+                        <div class="role-info" id="riderInfo" style="display: none;">
+                            <h4><i class="fas fa-motorcycle"></i> Rider Role</h4>
+                            <p>Responsible for timely delivery of products, maintaining delivery standards, and providing excellent customer service during deliveries.</p>
+                        </div>
+
+                        <div class="form-group" id="stateField" style="display: none;">
+                            <label for="state">Select Your State</label>
+                            <div class="input-with-icon">
+                                <i class="input-icon fas fa-map-marker-alt"></i>
+                                <select id="state" class="form-control select-control">
+                                    <option value="">Choose your state...</option>
+                                    <!-- States will be populated by JavaScript -->
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
+                    <button type="submit" class="btn btn-primary" id="registerBtn">
+                        Create Account
+                    </button>
+                </form>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">📊</span>
+                    <div class="feature-text">Order Management</div>
                 </div>
-
-                <div class="form-section">
-                    <div class="form-section-title">
-                        <i>💼</i>
-                        Role Selection
-                    </div>
-
-                    <div class="form-group">
-                        <label for="role">Select Your Role *</label>
-                        <select id="role" class="form-control select-control" required>
-                            <option value="">Choose your role...</option>
-                            <option value="customer_service">📞 Customer Service</option>
-                            <option value="rider">🚗 Rider</option>
-                        </select>
-                    </div>
-
-                    <div class="role-info" id="customerServiceInfo" style="display: none;">
-                        <h4>📞 Customer Service Role</h4>
-                        <p>As a Customer Service representative, you'll handle customer inquiries, process orders, and ensure customer satisfaction through excellent communication and problem-solving skills.</p>
-                    </div>
-
-                    <div class="role-info" id="riderInfo" style="display: none;">
-                        <h4>🚗 Rider Role</h4>
-                        <p>As a Rider, you'll be responsible for timely delivery of products, maintaining delivery standards, and providing excellent customer service during deliveries.</p>
-                    </div>
-
-                    <div class="form-group" id="stateField" style="display: none;">
-                        <label for="state">Select Your State *</label>
-                        <select id="state" class="form-control select-control">
-                            <option value="">Choose your state...</option>
-                            <!-- States will be populated by JavaScript -->
-                        </select>
-                    </div>
+                <div class="feature">
+                    <span class="feature-icon">👥</span>
+                    <div class="feature-text">Team Collaboration</div>
                 </div>
-
-                <button type="submit" class="btn btn-primary" id="submitBtn">
-                    Submit Application
-                </button>
-            </form>
+                <div class="feature">
+                    <span class="feature-icon">📱</span>
+                    <div class="feature-text">Real-time Messaging</div>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📈</span>
+                    <div class="feature-text">Performance Analytics</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const roleParam = urlParams.get('role');
-        const userId = window.location.pathname.split('/').pop();
-
         // DOM elements
-        const form = document.getElementById('registrationForm');
+        const tabs = document.querySelectorAll('.tab');
+        const forms = document.querySelectorAll('.form');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
         const alert = document.getElementById('alert');
         const roleSelect = document.getElementById('role');
         const stateField = document.getElementById('stateField');
         const stateSelect = document.getElementById('state');
         const customerServiceInfo = document.getElementById('customerServiceInfo');
         const riderInfo = document.getElementById('riderInfo');
-        const submitBtn = document.getElementById('submitBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const passwordToggles = document.querySelectorAll('.password-toggle');
 
-        // Set role from URL parameter if provided
-        if (roleParam) {
-            roleSelect.value = roleParam;
-            toggleRoleInfo(roleParam);
-        }
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding form
+                forms.forEach(form => {
+                    form.classList.remove('active');
+                    if (form.id === `${tabName}Form`) {
+                        form.classList.add('active');
+                    }
+                });
+                
+                // Clear alert when switching tabs
+                alert.style.display = 'none';
+            });
+        });
 
         // Role selection change handler
         roleSelect.addEventListener('change', function() {
@@ -414,6 +718,24 @@
             }
         }
 
+        // Password toggle functionality
+        passwordToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const passwordInput = document.getElementById(targetId);
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    this.classList.remove('fa-eye');
+                    this.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    this.classList.remove('fa-eye-slash');
+                    this.classList.add('fa-eye');
+                }
+            });
+        });
+
         // Load Nigeria states
         async function loadStates() {
             try {
@@ -434,8 +756,65 @@
             }
         }
 
-        // Form submission handler
-        form.addEventListener('submit', async (e) => {
+        // Login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                email: document.getElementById('loginEmail').value.trim(),
+                password: document.getElementById('loginPassword').value
+            };
+
+            // Basic validation
+            if (!formData.email || !formData.password) {
+                showAlert('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                showAlert('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = 'Signing In...';
+            loginBtn.classList.add('btn-loading');
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Login successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1500);
+                } else {
+                    showAlert(data.error || 'Login failed. Please check your credentials.', 'error');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = 'Sign In';
+                    loginBtn.classList.remove('btn-loading');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Sign In';
+                loginBtn.classList.remove('btn-loading');
+            }
+        });
+
+        // Registration form submission
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const formData = {
@@ -443,12 +822,15 @@
                 lastName: document.getElementById('lastName').value.trim(),
                 email: document.getElementById('email').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
+                password: document.getElementById('password').value,
+                confirmPassword: document.getElementById('confirmPassword').value,
                 role: roleSelect.value,
                 state: roleSelect.value === 'rider' ? stateSelect.value : null
             };
 
             // Basic validation
-            if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.role) {
+            if (!formData.firstName || !formData.lastName || !formData.email || 
+                !formData.phone || !formData.password || !formData.confirmPassword || !formData.role) {
                 showAlert('Please fill in all required fields', 'error');
                 return;
             }
@@ -467,6 +849,18 @@
                 return;
             }
 
+            // Password validation
+            if (formData.password.length < 6) {
+                showAlert('Password must be at least 6 characters long', 'error');
+                return;
+            }
+
+            // Password confirmation
+            if (formData.password !== formData.confirmPassword) {
+                showAlert('Passwords do not match', 'error');
+                return;
+            }
+
             // For riders, state is required
             if (formData.role === 'rider' && !formData.state) {
                 showAlert('Please select your state for rider applications', 'error');
@@ -474,12 +868,12 @@
             }
 
             // Show loading state
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = 'Submitting Application...';
-            submitBtn.classList.add('btn-loading');
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = 'Creating Account...';
+            registerBtn.classList.add('btn-loading');
 
             try {
-                const response = await fetch(`/register/${userId}`, {
+                const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -490,27 +884,40 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    showAlert(data.message, 'success');
+                    showAlert('Account created successfully! Please wait for admin approval.', 'success');
                     setTimeout(() => {
-                        window.location.href = data.redirectUrl;
-                    }, 2000);
+                        // Switch to login tab
+                        document.querySelector('.tab[data-tab="login"]').click();
+                        // Pre-fill email
+                        document.getElementById('loginEmail').value = formData.email;
+                        registerBtn.disabled = false;
+                        registerBtn.innerHTML = 'Create Account';
+                        registerBtn.classList.remove('btn-loading');
+                        registerForm.reset();
+                    }, 3000);
                 } else {
-                    showAlert(data.error || 'Failed to submit application', 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Submit Application';
-                    submitBtn.classList.remove('btn-loading');
+                    showAlert(data.error || 'Failed to create account', 'error');
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = 'Create Account';
+                    registerBtn.classList.remove('btn-loading');
                 }
             } catch (error) {
                 showAlert('Network error. Please try again.', 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Submit Application';
-                submitBtn.classList.remove('btn-loading');
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = 'Create Account';
+                registerBtn.classList.remove('btn-loading');
             }
+        });
+
+        // Forgot password handler
+        document.getElementById('forgotPassword').addEventListener('click', (e) => {
+            e.preventDefault();
+            showAlert('Please contact your administrator to reset your password.', 'info');
         });
 
         function showAlert(message, type) {
             alert.textContent = message;
-            alert.className = 'alert ' + (type === 'success' ? 'alert-success' : 'alert-error');
+            alert.className = 'alert ' + (type === 'success' ? 'alert-success' : type === 'error' ? 'alert-error' : 'alert-success');
             alert.style.display = 'block';
             
             if (type === 'success') {
@@ -521,8 +928,11 @@
         }
 
         // Initialize form based on URL parameters
-        if (roleParam) {
-            toggleRoleInfo(roleParam);
+        const urlParams = new URLSearchParams(window.location.search);
+        const action = urlParams.get('action');
+        
+        if (action === 'register') {
+            document.querySelector('.tab[data-tab="register"]').click();
         }
     </script>
 </body>
